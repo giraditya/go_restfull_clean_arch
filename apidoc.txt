@@ -1,0 +1,4 @@
+Controller -> Service -> Repository
+
+Controller take request from http request and send the request to service layer
+Service layer do logic flow and send data to the repository and the repository r

@@ -22,6 +22,9 @@ type Animal struct {
 	Type string
 }
 
+type Teritorial interface {
+}
+
 func (a Animal) Walk() string {
 	return "Animal Walk"
 }

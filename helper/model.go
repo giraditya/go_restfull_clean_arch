@@ -36,3 +36,40 @@ func ToProductResponses(products []domain.Product) []response.ProductResponse {
 	}
 	return productResponses
 }
+
+func ToUserResponse(user domain.User) response.UserResponse {
+	return response.UserResponse{
+		Name:    user.Name,
+		Address: user.Address,
+	}
+}
+
+func ToUserReponses(users []domain.User) []response.UserResponse {
+	var userResponses []response.UserResponse
+	for _, user := range users {
+		userResponses = append(userResponses, ToUserResponse(user))
+	}
+	return userResponses
+}
+
+func ToCompanyResponse(company domain.Company) response.CompanyResponse {
+	return response.CompanyResponse{
+		ID:   company.ID,
+		Name: company.Name,
+		Code: company.Code,
+	}
+}
+
+func ToCompanyResponses(companies []domain.Company) []response.CompanyResponse {
+	var companyResponses []response.CompanyResponse
+	for _, company := range companies {
+		companyResponses = append(companyResponses, ToCompanyResponse(company))
+	}
+	return companyResponses
+}
+
+func ToAuthKeyResponse(authKey string) response.UserAuthKeyResponse {
+	return response.UserAuthKeyResponse{
+		AuthKey: authKey,
+	}
+}

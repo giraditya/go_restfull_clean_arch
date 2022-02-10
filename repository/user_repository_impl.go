@@ -36,7 +36,7 @@ func (repository *UserRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, us
 }
 
 func (repository *UserRepositoryImpl) FindByID(ctx context.Context, tx *sql.Tx, userID int) (domain.User, error) {
-	SQL := "SELECT user.id, user.name, user.address, user.username, company.name FROM user LEFT JOIN company ON company.ID = user.companyID WHERE user.id = ?"
+	SQL := "SELECT user.id, user.name, user.address, user.username, company.name FROM user LEFT JOIN company ON company.id = user.companyID WHERE user.id = ?"
 	rows, err := tx.QueryContext(ctx, SQL, userID)
 	helper.PanicIfError(err)
 	defer rows.Close()
@@ -51,5 +51,17 @@ func (repository *UserRepositoryImpl) FindByID(ctx context.Context, tx *sql.Tx, 
 }
 
 func (repository *UserRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx) []domain.User {
-	return []domain.User{}
+	SQL := "SELECT user.id, user.name, user.address, user.username, company.name FROM user LEFT JOIN company ON user.companyID = company.id"
+	rows, err := tx.QueryContext(ctx, SQL)
+	helper.PanicIfError(err)
+	defer rows.Close()
+
+	var users []domain.User
+	for rows.Next() {
+		user := domain.User{}
+		err := rows.Scan(&user.ID, &user.Name, &user.Address, &user.Username, &user.Company.Name)
+		helper.PanicIfError(err)
+		users = append(users, user)
+	}
+	return users
 }

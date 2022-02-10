@@ -1,8 +1,11 @@
 package domain
 
+import "time"
+
 type Order struct {
-	ID       string
-	Date     string
-	Customer Customer
-	BranchID Branch
+	ID          string
+	CreatedDate time.Time
+	UpdatedDate time.Time
+	Customer    Customer
+	Branch      Branch
 }

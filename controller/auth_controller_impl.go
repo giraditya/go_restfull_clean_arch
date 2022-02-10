@@ -24,18 +24,11 @@ func (controller *AuthControllerImpl) RequestToken(rw http.ResponseWriter, r *ht
 	userRequest := request.UserGenerateAuthKeyRequest{}
 	helper.ReadFromRequestBody(r, &userRequest)
 
-	credentialsValid := controller.AuthService.CredentialsValid(r.Context(), userRequest)
-	webResponse := api.WebResponse{}
-	if credentialsValid {
-		tokenResponse := controller.AuthService.GenerateAuthKey(r.Context(), userRequest)
-		webResponse.Code = 200
-		webResponse.Status = "OK"
-		webResponse.Data = tokenResponse
-	} else {
-		webResponse.Code = 200
-		webResponse.Status = "Credentials is invalid"
-		webResponse.Data = nil
+	tokenResponse := controller.AuthService.GenerateAuthKey(r.Context(), userRequest)
+	webResponse := api.WebResponse{
+		Code:   200,
+		Status: "OK",
+		Data:   tokenResponse,
 	}
-
 	helper.WriteToResponseBody(rw, webResponse)
 }

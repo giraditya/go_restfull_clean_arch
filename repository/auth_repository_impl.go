@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"giricorp/belajar-go-restfull-api/helper"
 	"math/rand"
@@ -42,14 +43,15 @@ func (repository *AuthRepositoryImpl) GenerateAuthKey(ctx context.Context, tx *s
 	return string(authKey)
 }
 
-func (repository *AuthRepositoryImpl) CredentialsValid(ctx context.Context, tx *sql.Tx, username string, password string) bool {
+func (repository *AuthRepositoryImpl) CredentialsValid(ctx context.Context, tx *sql.Tx, username string, password string) (bool, error) {
 	SQL := "SELECT user.id, user.name, user.address, user.username, company.name FROM user LEFT JOIN company ON company.ID = user.companyID WHERE user.username = ? AND user.password = ?"
 	rows, err := tx.QueryContext(ctx, SQL, username, password)
 	helper.PanicIfError(err)
 	defer rows.Close()
 
 	if rows.Next() {
-		return true
+		return true, nil
+	} else {
+		return false, errors.New("credentials is invalid")
 	}
-	return false
 }

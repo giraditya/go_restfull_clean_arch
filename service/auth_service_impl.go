@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"database/sql"
+	"giricorp/belajar-go-restfull-api/exception"
 	"giricorp/belajar-go-restfull-api/helper"
 	"giricorp/belajar-go-restfull-api/model/api/request"
 	"giricorp/belajar-go-restfull-api/model/api/response"
@@ -48,7 +49,15 @@ func (service *AuthServiceImpl) GenerateAuthKey(ctx context.Context, request req
 	helper.PanicIfError(err)
 	defer helper.CommitOrRollback(tx)
 
-	authKey := service.AuthRepository.GenerateAuthKey(ctx, tx, request.Username, 12)
+	credentialsValid, err := service.AuthRepository.CredentialsValid(ctx, tx, request.Username, request.Password)
+	if err != nil {
+		panic(exception.NewUnauthorizedError(err.Error()))
+	}
+
+	var authKey string
+	if credentialsValid {
+		authKey = service.AuthRepository.GenerateAuthKey(ctx, tx, request.Username, 12)
+	}
 
 	return helper.ToAuthKeyResponse(authKey)
 }
@@ -58,6 +67,9 @@ func (service *AuthServiceImpl) CredentialsValid(ctx context.Context, request re
 	helper.PanicIfError(err)
 	defer helper.CommitOrRollback(tx)
 
-	result := service.AuthRepository.CredentialsValid(ctx, tx, request.Username, request.Password)
+	result, err := service.AuthRepository.CredentialsValid(ctx, tx, request.Username, request.Password)
+	if err != nil {
+		panic(exception.NewUnauthorizedError(err.Error()))
+	}
 	return result
 }
